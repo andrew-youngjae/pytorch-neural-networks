@@ -1,6 +1,8 @@
 #%%
 import torch
 
+# PyTorch Tensor는 GPU를 활용하여 수치 연산을 가속화할 수 있음
+# GPU에서 PyTorch Tensor를 실행하기 위해서는 단지 새로운 자료형으로 변환(Cast)해주기만 하면 됨
 # 연산에 사용될 data type - 보통 계산을 하기 위한 데이터들에는 FloatTensor 사용
 dtype = torch.FloatTensor
 
@@ -13,9 +15,19 @@ batch_size, input_dim, hidden_dim, output_dim = 64, 1000, 100, 10
 x = torch.randn(batch_size, input_dim).type(dtype)
 y = torch.randn(batch_size, output_dim).type(dtype)
 
+print("input x size : ", x.size())
+# input x size : (64,1000)
+print("output y size : ", y.size())
+# output y size : (64,10)
+
 # 가중치 무작위 초기화
 w1 = torch.randn(input_dim, hidden_dim).type(dtype)
 w2 = torch.randn(hidden_dim, output_dim).type(dtype)
+
+print("w1 size : ", w1.size())
+# w1 size : (1000, 100)
+print("w2 size : ", w2.size())
+# w2 size : (100,10)
 
 learning_rate = 1e-6
 for t in range(500):
@@ -23,10 +35,18 @@ for t in range(500):
     # calculate prediction y
     # torch.mm => matrix multiplicaiton
     hidden = x.mm(w1)
+    print("hidden layer size : ", hidden.size())
+    # hidden layer size : (64,100)
+
     # relu 계산을 위해 min=0으로 지정한 값보다 작은 값들을 0으로 교체
     hidden_after_relu = hidden.clamp(min=0)
+    print("hidden layer after relu size : ", hidden_after_relu.size())
+    # hidden layer after relu size : (64, 100)
+    
     # y prediction 값 도출
     y_pred = hidden_after_relu.mm(w2)
+    print("y_prediction size : ", y_pred.size())
+    # y_prediction size : (64,10)
 
     # Loss(손실)값 계산
     loss = (y_pred - y).pow(2).sum()
